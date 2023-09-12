@@ -88,7 +88,8 @@ if selected == 'Earnings Data':
             error_tickers.append(ticker)
     if len(error_tickers) > 0:
         st.write('The following tickers are not available:', ' '.join(error_tickers))
-    # tickers = set(tickers)
+    tickers = set(tickers)
+    tickers = list(tickers)
     n_days = st.number_input('Stock performance after n trading days', step=1, min_value=1)
 
 
