@@ -96,7 +96,7 @@ if selected == 'Earnings Data':
 
     if len(tickers) > 0:
         earnings_temp = earnings.query('ticker.isin(@tickers)')
-        earnings_temp['dow'] = pd.to_datetime(earnings_temp['dates']).dt.day_of_week
+        earnings_temp.loc[:, 'dow'] = pd.to_datetime(earnings_temp['dates']).dt.day_of_week
         earnings_temp = earnings_temp.query('dow.isin([0, 1, 2, 3, 4])')
 
         trading_dates = prices.reset_index()['Date']
