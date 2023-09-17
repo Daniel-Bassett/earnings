@@ -16,9 +16,11 @@ def load_data(filepath):
         df = df.query('dates < @today')
         df = df.drop(columns=['country', 'category'])
         df['dates'] = df['dates'].dt.date
-    else:
-        df = pd.read_csv(filepath)
+    elif 'stocks' in filepath:
+        df = pd.read_parquet(filepath)
     return df
+
+
 
 
 @st.cache_data
@@ -28,8 +30,7 @@ def convert_df(df):
 prices1 = load_data('data/prices1.parquet')
 prices2 = load_data('data/prices2.parquet')
 prices = pd.concat([prices1, prices2])
-# prices = load_data('data/prices.csv')
-stocks = load_data('data/stocks.csv')
+stocks = load_data('data/stocks.parquet')
 stocks['category'] = stocks.category.str.split(', ')
 earnings = load_data('data/earnings.csv')
 
