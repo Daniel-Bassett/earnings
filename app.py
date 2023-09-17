@@ -1,7 +1,9 @@
 import streamlit as st
+import gc
 from streamlit_option_menu import option_menu
 import pandas as pd
 import datetime as dt
+
 
 @st.cache_data
 def load_data(filepath):
@@ -21,15 +23,29 @@ def load_data(filepath):
     return df
 
 
+def no_cache_load(filepath):
+    if 'prices' in filepath:
+        df = pd.read_parquet(filepath)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df['Date'] = df['Date'].dt.date
+        df = df.set_index(['Date'])
+    return df
+
+
+@st.cache_data
+def load_prices():
+    prices1 = no_cache_load('data/prices1.parquet')
+    prices2 = no_cache_load('data/prices2.parquet')
+    prices = pd.concat([prices1, prices2])
+    return prices
 
 
 @st.cache_data
 def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
 
-prices1 = load_data('data/prices1.parquet')
-prices2 = load_data('data/prices2.parquet')
-prices = pd.concat([prices1, prices2])
+
+prices = load_prices()
 stocks = load_data('data/stocks.parquet')
 stocks['category'] = stocks.category.str.split(', ')
 earnings = load_data('data/earnings.csv')
