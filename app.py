@@ -5,9 +5,14 @@ import datetime as dt
 
 @st.cache_data
 def load_data(filepath):
-    if filepath == 'data/prices.csv':
-        df = pd.read_csv(filepath, header=[0, 1])
-        df = df.rename(columns={'Unnamed: 0_level_1': ''})
+    # if filepath == 'data/prices.csv':
+    #     df = pd.read_csv(filepath, header=[0, 1])
+    #     df = df.rename(columns={'Unnamed: 0_level_1': ''})
+    #     df['Date'] = pd.to_datetime(df['Date'])
+    #     df['Date'] = df['Date'].dt.date
+    #     df = df.set_index(['Date'])
+    if 'prices' in filepath:
+        df = pd.read_parquet(filepath)
         df['Date'] = pd.to_datetime(df['Date'])
         df['Date'] = df['Date'].dt.date
         df = df.set_index(['Date'])
@@ -26,8 +31,10 @@ def load_data(filepath):
 def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
 
-
-prices = load_data('data/prices.csv')
+prices1 = load_data('data/prices1.parquet')
+prices2 = load_data('data/prices2.parquet')
+prices = pd.concat([prices1, prices2])
+# prices = load_data('data/prices.csv')
 stocks = load_data('data/stocks.csv')
 stocks['category'] = stocks.category.str.split(', ')
 earnings = load_data('data/earnings.csv')
@@ -60,7 +67,7 @@ if selected == 'Stock Filter':
 
 
     # volume filter
-    volume_range = st.slider('90-Day Average Volume (millions)', value=(0, 150), step=5)
+    volume_range = st.slider('90-Day Median Volume (millions)', value=(0, 150), step=5)
     temp_df = temp_df.query('volume_90_day.between(@volume_range[0], @volume_range[1])')
 
 
