@@ -138,6 +138,7 @@ if selected == 'Earnings Data':
         # format the data frame
         earnings_temp[f'{n_days}_day_performance'] = (earnings_temp[f'{n_days}_day_performance'] * 100).round(2)
         earnings_temp = earnings_temp.rename(columns={'dates': 'earnings_date'})
+        earnings_temp = earnings_temp.dropna()
         earnings_temp = earnings_temp[['ticker', 'earnings_date', 'eps_estimate', 'eps_actual', f'{n_days}_day_performance']].reset_index(drop=True)
         st.dataframe(earnings_temp)
 
