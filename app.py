@@ -5,12 +5,6 @@ import datetime as dt
 
 @st.cache_data
 def load_data(filepath):
-    # if filepath == 'data/prices.csv':
-    #     df = pd.read_csv(filepath, header=[0, 1])
-    #     df = df.rename(columns={'Unnamed: 0_level_1': ''})
-    #     df['Date'] = pd.to_datetime(df['Date'])
-    #     df['Date'] = df['Date'].dt.date
-    #     df = df.set_index(['Date'])
     if 'prices' in filepath:
         df = pd.read_parquet(filepath)
         df['Date'] = pd.to_datetime(df['Date'])
