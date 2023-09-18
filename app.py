@@ -22,36 +22,25 @@ def load_data(filepath):
     return df
 
 
-# def no_cache_load(filepath):
-#     if 'prices' in filepath:
-#         df = pd.read_parquet(filepath)
-#         df['Date'] = pd.to_datetime(df['Date'])
-#         df['Date'] = df['Date'].dt.date
-#         df = df.set_index(['Date'])
-#     return df
-
-
-# @st.cache_data
-# def load_prices():
-#     prices1 = no_cache_load('data/prices1.parquet')
-#     prices2 = no_cache_load('data/prices2.parquet')
-#     prices = pd.concat([prices1, prices2])
-#     return prices
-
-
 @st.cache_data
 def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
 
-
+# load price data
 prices1 = load_data('data/prices1.parquet')
 prices2 = load_data('data/prices2.parquet')
 prices = pd.concat([prices1, prices2])
+
+# load stock data
 stocks = load_data('data/stocks.parquet')
 stocks['category'] = stocks.category.str.split(', ')
+
+# load earnings data
 earnings = load_data('data/earnings.csv')
+earnings['dates'] = pd.to_datetime(earnings.dates)
+earnings = earnings.query('dates.dt.year >= 2005')
 
-
+# create options for select filters
 ticker_options = stocks.ticker.unique()
 category_options = stocks.category.str[0].unique()
 
@@ -109,7 +98,7 @@ if selected == 'Earnings Data':
         st.write('The following tickers are not available:', ' '.join(error_tickers))
     tickers = set(tickers)
     tickers = list(tickers)
-    n_days = st.number_input('Stock performance after n trading days', step=1, min_value=1)
+    n_days = st.number_input('Stock performance after n trading days', step=1, min_value=1, value=10)
 
 
     if len(tickers) > 0:
