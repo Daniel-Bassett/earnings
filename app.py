@@ -30,6 +30,8 @@ def convert_df(df):
 prices1 = load_data('data/prices1.parquet')
 prices2 = load_data('data/prices2.parquet')
 prices = pd.concat([prices1, prices2])
+# prices.index = pd.to_datetime(prices.index)
+# prices = prices.query('Date.dt.year >= 2005')
 
 # load stock data
 stocks = load_data('data/stocks.parquet')
@@ -112,7 +114,8 @@ if selected == 'Earnings Data':
         
         earnings_temp = earnings_temp.dropna()
 
-        prices_temp = ((prices['Close'][tickers].shift(-n_days) - prices['Close'][tickers]) / prices['Close'][tickers])
+        # prices_temp = ((prices['Close'][tickers].shift(-n_days) - prices['Close'][tickers]) / prices['Close'][tickers])
+        prices_temp = ((prices['Open'][tickers].shift(-n_days) - prices['Open'][tickers]) / prices['Open'][tickers])
         prices_temp.index = pd.to_datetime(prices_temp.index)
 
         for index, row in earnings_temp.iterrows():
